@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Incoming Hug... 🧸</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&family=Fredoka+One&display=swap');
+
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-color: #fce4ec; /* Light pink start */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Poppins', sans-serif;
+            overflow: hidden;
+            transition: background-color 0.5s ease;
+            touch-action: none; /* Disables scrolling */
+            user-select: none;
+        }
+
+        /* --- THE BEAR CONTAINER --- */
+        .bear-container {
+            position: relative;
+            width: 250px;
+            height: 250px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* The Emoji Bear - Huge Size */
+        .bear {
+            font-size: 150px;
+            filter: grayscale(0.5) brightness(0.9); /* Initially sleepy/dim */
+            transition: all 0.2s ease;
+            animation: breathe 3s infinite ease-in-out;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* The Glowing Aura (Hidden initially) */
+        .aura {
+            position: absolute;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, rgba(255, 46, 99, 0.6) 0%, transparent 70%);
+            border-radius: 50%;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: opacity 0.2s;
+            z-index: 1;
+        }
+
+        /* --- THE HUG METER (Progress Ring) --- */
+        .progress-container {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            pointer-events: none;
+        }
+
+        circle {
+            fill: none;
+            stroke-width: 10;
+            transform: rotate(-90deg);
+            transform-origin: 50% 50%;
+            stroke-linecap: round;
+        }
+
+        .circle-bg {
+            stroke: #e0e0e0;
+        }
+
+        .circle-progress {
+            stroke: #ff2e63;
+            stroke-dasharray: 880; /* Circumference approx */
+            stroke-dashoffset: 880; /* Start empty */
+            transition: stroke-dashoffset 0.1s linear;
+        }
+
+        /* --- TEXT INSTRUCTIONS --- */
+        .instruction {
+            margin-top: 40px;
+            color: #888;
+            font-weight: 600;
+            text-align: center;
+            pointer-events: none;
+            animation: pulseText 2s infinite;
+        }
+
+        /* --- FINAL MESSAGE SCREEN --- */
+        .message-screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at center, #fff0f3 0%, #ff80ab 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+            transform: scale(0.8);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .message-screen.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: all;
+        }
+
+        .message-screen h1 {
+            font-family: 'Fredoka One', cursive;
+            color: #d81b60;
+            font-size: 3rem;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+        .message-screen p {
+            font-size: 1.2rem;
+            color: #880e4f;
+            margin-top: 15px;
+            padding: 0 20px;
+        }
+
+        .bear-hug {
+            font-size: 120px;
+            margin-bottom: 20px;
+            animation: bounce 2s infinite;
+        }
+
+        /* --- ANIMATIONS --- */
+        @keyframes breathe {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        @keyframes shake {
+            0% { transform: translate(1px, 1px) rotate(0deg); }
+            10% { transform: translate(-1px, -2px) rotate(-1deg); }
+            20% { transform: translate(-3px, 0px) rotate(1deg); }
+            30% { transform: translate(3px, 2px) rotate(0deg); }
+            40% { transform: translate(1px, -1px) rotate(1deg); }
+            50% { transform: translate(-1px, 2px) rotate(-1deg); }
+            60% { transform: translate(-3px, 1px) rotate(0deg); }
+            70% { transform: translate(3px, 1px) rotate(-1deg); }
+            80% { transform: translate(-1px, -1px) rotate(1deg); }
+            90% { transform: translate(1px, 2px) rotate(0deg); }
+            100% { transform: translate(1px, -2px) rotate(-1deg); }
+        }
+
+        @keyframes pulseText {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        /* Floating Hearts */
+        .heart-particle {
+            position: absolute;
+            color: #ff2e63;
+            animation: floatUp 1s forwards;
+            pointer-events: none;
+            font-size: 20px;
+            z-index: 5;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(1); opacity: 1; }
+            100% { transform: translateY(-100px) scale(0); opacity: 0; }
+        }
+
+        /* Active State Classes */
+        body.charging {
+            background-color: #222; /* Dim the lights */
+        }
+
+        .bear.charging {
+            filter: grayscale(0) brightness(1.2);
+            animation: shake 0.5s infinite; /* Vibrate visually */
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="progress-container">
+        <svg width="300" height="300">
+            <circle class="circle-bg" cx="150" cy="150" r="140"></circle>
+            <circle class="circle-progress" id="progress" cx="150" cy="150" r="140"></circle>
+        </svg>
+    </div>
+
+    <div class="bear-container" id="bearBtn">
+        <div class="aura" id="aura"></div>
+        <div class="bear" id="bearEmoji">🧸</div>
+    </div>
+
+    <div class="instruction" id="instruction">
+        Press & Hold to send a Hug...
+    </div>
+
+    <div class="message-screen" id="finalScreen">
+        <div class="bear-hug">🤗❤️</div>
+        <h1>Hug Delivered!</h1>
+        <p>I may not be there,<br>but this teddy is holding you for me.</p>
+        <p style="font-size: 14px; margin-top: 30px; opacity: 0.7;">Happy Teddy Day! 🍫</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script>
+        const bearBtn = document.getElementById('bearBtn');
+        const bearEmoji = document.getElementById('bearEmoji');
+        const progressCircle = document.getElementById('progress');
+        const instruction = document.getElementById('instruction');
+        const aura = document.getElementById('aura');
+        const finalScreen = document.getElementById('finalScreen');
+        const body = document.body;
+
+        let progress = 0;
+        let interval;
+        let isHolding = false;
+        let isComplete = false;
+
+        // Sound effect (optional visual cue logic)
+        
+        // --- EVENT LISTENERS (Touch & Mouse) ---
+        bearBtn.addEventListener('mousedown', startHug);
+        bearBtn.addEventListener('touchstart', (e) => { e.preventDefault(); startHug(); });
+
+        window.addEventListener('mouseup', stopHug);
+        window.addEventListener('touchend', stopHug);
+
+        function startHug() {
+            if (isComplete) return;
+            isHolding = true;
+            
+            // Visual Changes
+            bearEmoji.classList.add('charging');
+            body.classList.add('charging');
+            aura.style.opacity = '1';
+            aura.style.transform = 'scale(1.5)';
+            instruction.innerText = "Charging Love... ❤️";
+            instruction.style.color = "#ff2e63";
+
+            // Start the Loop
+            interval = setInterval(() => {
+                if (progress >= 100) {
+                    completeHug();
+                } else {
+                    progress += 2; // Speed of charging
+                    updateProgress();
+                    createHeart();
+                    
+                    // HAPTIC FEEDBACK (Vibration)
+                    // Vibrates briefly every few ticks to simulate heartbeat
+                    if (progress % 10 === 0 && navigator.vibrate) {
+                        navigator.vibrate(50); 
+                    }
+                }
+            }, 50);
+        }
+
+        function stopHug() {
+            if (isComplete) return;
+            isHolding = false;
+            clearInterval(interval);
+            
+            // Reset if not finished
+            progress = 0;
+            updateProgress();
+
+            // Reset Visuals
+            bearEmoji.classList.remove('charging');
+            body.classList.remove('charging');
+            aura.style.opacity = '0';
+            aura.style.transform = 'scale(0.5)';
+            instruction.innerText = "Press & Hold to send a Hug...";
+            instruction.style.color = "#888";
+        }
+
+        function updateProgress() {
+            // Update Circle CSS
+            const circumference = 880;
+            const offset = circumference - (progress / 100) * circumference;
+            progressCircle.style.strokeDashoffset = offset;
+
+            // Grow the bear slightly
+            let scale = 1 + (progress / 500);
+            bearEmoji.style.transform = `scale(${scale})`;
+        }
+
+        function createHeart() {
+            const heart = document.createElement('div');
+            heart.classList.add('heart-particle');
+            heart.innerText = '❤️';
+            
+            // Random position near the bear
+            const x = Math.random() * 200 - 100;
+            const y = Math.random() * 50;
+            
+            heart.style.left = `calc(50% + ${x}px)`;
+            heart.style.top = `calc(50% + ${y}px)`;
+            
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 1000);
+        }
+
+        function completeHug() {
+            isComplete = true;
+            clearInterval(interval);
+
+            // Massive Vibration
+            if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+
+            // Confetti Explosion
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+
+            // Show Message
+            finalScreen.classList.add('active');
+            
+            // Reset background
+            body.classList.remove('charging');
+        }
+
+    </script>
+</body>
+</html>
